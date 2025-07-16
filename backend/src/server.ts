@@ -1,17 +1,18 @@
-import express from "express";
-import bodyParser from "body-parser";
 import "dotenv/config";
 
-const app = express();
+import app from "./app.ts";
+import { connectDB } from "./config/db.ts";
+import env from "./utils/validateEnv.ts";
 
-app.use(bodyParser.json());
+const port = env.PORT || 8080;
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-const port = process.env.PORT || 8080;
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+connectDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error(`Failed to connect to the database: ${error.message}`);
+    process.exit(1);
+  });
