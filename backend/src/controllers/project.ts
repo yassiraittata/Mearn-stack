@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import { validationResult } from "express-validator";
 
 import projectModel from "../models/project.ts";
@@ -27,4 +28,30 @@ const createProject: express.RequestHandler = async (req, res, next) => {
   });
 };
 
-export { createProject };
+const deleteProject: express.RequestHandler = async (req, res, next) => {
+  const projectId = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(projectId)) {
+    return res.status(400).json({ message: "Invalid ID format" });
+  }
+
+  const project = await projectModel.findById(projectId);
+
+  if (!project) {
+    res.status(404);
+    return next(Error("Project not found"));
+  }
+
+  if (project.creator.toString() !== req.user.id) {
+    res.status(403);
+    return next(Error("You do not have permission to delete this project"));
+  }
+
+  await project.deleteOne();
+
+  res.status(200).json({
+    message: "Project deleted successfully",
+  });
+};
+
+export { createProject, deleteProject };
