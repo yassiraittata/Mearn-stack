@@ -6,12 +6,10 @@ import env from "./utils/validateEnv.ts";
 
 const port = env.PORT || 8080;
 
-
-
 connectDB()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+      console.log(`Server is ru nning on port ${port}`);
     });
   })
   .catch((error) => {
