@@ -4,7 +4,7 @@ import { body } from "express-validator";
 import { signup, signin } from "../controllers/user.ts";
 
 export default (router: express.Router) => {
-  router.get(
+  router.post(
     "/auth/signup",
     [
       body("name").notEmpty().withMessage("Name is required"),
@@ -15,5 +15,14 @@ export default (router: express.Router) => {
     ],
     signup
   );
-  router.get("/auth/signin", signin);
+  router.post(
+    "/auth/signin",
+    [
+      body("email").isEmail().withMessage("Valid email is required"),
+      body("password")
+        .isLength({ min: 6 })
+        .withMessage("Password must be at least 6 characters long"),
+    ],
+    signin
+  );
 };
