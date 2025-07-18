@@ -5,9 +5,11 @@ import {
   deleteProject,
   assignUsersToProject,
   eremoveUsersFromProject,
+  getUserProjects,
 } from "../controllers/project.ts";
 
 export default (router: express.Router) => {
+  router.get("/projects", validateToken, getUserProjects);
   router.post("/projects/create", validateToken, createProject);
   router.delete("/projects/:id", validateToken, deleteProject);
   router.put("/projects/assign/:id", validateToken, assignUsersToProject);

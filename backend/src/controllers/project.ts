@@ -117,9 +117,21 @@ const eremoveUsersFromProject: express.RequestHandler = async (
   });
 };
 
+// get all projects that a user is a part of
+const getUserProjects: express.RequestHandler = async (req, res, next) => {
+  const userId = req.user.id;
+
+  const projects = await projectModel.find({
+    $or: [{ creator: userId }, { developers: userId }],
+  });
+
+  res.status(200).json(projects);
+};
+
 export {
   createProject,
   deleteProject,
   assignUsersToProject,
   eremoveUsersFromProject,
+  getUserProjects,
 };
