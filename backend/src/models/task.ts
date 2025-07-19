@@ -14,6 +14,7 @@ const taskSchema = new Schema(
       type: String,
       required: true,
       enum: ["todo", "in-progress", "done"],
+      default: "todo",
     },
 
     developer: {
