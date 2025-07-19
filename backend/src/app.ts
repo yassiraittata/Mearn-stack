@@ -1,11 +1,14 @@
 import express from "express";
 import bodyParser from "body-parser";
+import morgan from "morgan";
+
 import router from "./router/index.ts";
 import errorHandler from "./middleware/errorHandler.ts";
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(morgan("dev"));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

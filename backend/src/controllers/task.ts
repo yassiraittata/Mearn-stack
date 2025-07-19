@@ -9,6 +9,7 @@ import taskModel from "../models/task.ts";
 const getTasksForProject: express.RequestHandler = async (req, res, next) => {
   const projectId = req.params.projectId;
   const userId = req.user?.id;
+  
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
     res.status(400);
     return next(Error("Invalid ID format"));
