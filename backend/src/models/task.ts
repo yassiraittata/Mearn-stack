@@ -16,8 +16,8 @@ const taskSchema = new Schema(
       enum: ["todo", "in-progress", "done"],
     },
 
-    developers: {
-      type: [Schema.Types.ObjectId],
+    developer: {
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },

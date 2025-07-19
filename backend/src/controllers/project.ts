@@ -32,7 +32,8 @@ const deleteProject: express.RequestHandler = async (req, res, next) => {
   const projectId = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    return res.status(400).json({ message: "Invalid ID format" });
+    res.status(400);
+    return next(Error("Invalid ID format"));
   }
 
   const project = await projectModel.findById(projectId);
@@ -58,7 +59,8 @@ const assignUsersToProject: express.RequestHandler = async (req, res, next) => {
   const projectId = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    return res.status(400).json({ message: "Invalid ID format" });
+    res.status(400);
+    return next(Error("Invalid ID format"));
   }
 
   const project = await projectModel.findById(projectId);
@@ -83,7 +85,7 @@ const assignUsersToProject: express.RequestHandler = async (req, res, next) => {
   });
 };
 
-const eremoveUsersFromProject: express.RequestHandler = async (
+const removeUsersFromProject: express.RequestHandler = async (
   req,
   res,
   next
@@ -91,7 +93,8 @@ const eremoveUsersFromProject: express.RequestHandler = async (
   const projectId = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    return res.status(400).json({ message: "Invalid ID format" });
+    res.status(400);
+    return next(Error("Invalid ID format"));
   }
 
   const project = await projectModel.findById(projectId);
@@ -132,6 +135,6 @@ export {
   createProject,
   deleteProject,
   assignUsersToProject,
-  eremoveUsersFromProject,
+  removeUsersFromProject,
   getUserProjects,
 };
