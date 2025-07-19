@@ -32,6 +32,7 @@ const getTasksForProject: express.RequestHandler = async (req, res, next) => {
   res.status(200).json(project);
 };
 
+// create a new task for a project
 const createTaskForProject: express.RequestHandler = async (req, res, next) => {
   const projectId = req.params.projectId;
   const userId = req.user?.id;
@@ -87,6 +88,7 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
   res.status(201).json(task);
 };
 
+// delete a task
 const deleteTask: express.RequestHandler = async (req, res, next) => {
   const taskId = req.params.taskId;
   const userId = req.user?.id;
@@ -123,4 +125,71 @@ const deleteTask: express.RequestHandler = async (req, res, next) => {
   res.status(200).json({ message: "Task deleted successfully" });
 };
 
-export { getTasksForProject, createTaskForProject, deleteTask };
+// update a task
+const updateTask: express.RequestHandler = async (req, res, next) => {
+  const taskId = req.params.taskId;
+  const userId = req.user?.id;
+
+  if (!mongoose.Types.ObjectId.isValid(taskId)) {
+    res.status(400);
+    return next(Error("Invalid task ID format"));
+  }
+
+  const { title, text, status, developer } = req.body;
+  const taskItem = await taskModel.findById(taskId);
+
+  if (!taskItem) {
+    res.status(404);
+    return next(Error("Task not found"));
+  }
+
+  const project = await projectModel.findById(taskItem.project);
+
+  if (!project) {
+    res.status(404);
+    return next(Error("Project not found"));
+  }
+
+  // Upate task only if the user is the creator of the project or a developer in the project
+  if (
+    !project.developers.includes(userId) &&
+    project.creator.toString() !== userId
+  ) {
+    res.status(400);
+    return next(Error("You are not authorized to update this task"));
+  }
+
+  // validate data
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400);
+    return next(
+      Error(
+        errors
+          .array()
+          .map((err) => err.msg)
+          .join(", ")
+      )
+    );
+  }
+
+  if (
+    project.creator.toString() !== userId &&
+    project.developers.includes(userId)
+  ) {
+    // if the user is a developer, he can only update the status of the task
+    taskItem.status = status || taskItem.status;
+  } else {
+    // if the user is the creator, he can update all fields
+    taskItem.title = title || taskItem.title;
+    taskItem.text = text || taskItem.text;
+    taskItem.status = status || taskItem.status;
+    taskItem.developer = developer || taskItem.developer;
+  }
+
+  await taskItem.save();
+
+  res.status(200).json(taskItem);
+};
+
+export { getTasksForProject, createTaskForProject, deleteTask, updateTask };
