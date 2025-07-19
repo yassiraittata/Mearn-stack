@@ -8,6 +8,7 @@ import taskModel from "../models/task.ts";
 // get all tasks that are part of a project
 const getTasksForProject: express.RequestHandler = async (req, res, next) => {
   const projectId = req.params.projectId;
+  const userId = req.user?.id;
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
     res.status(400);
     return next(Error("Invalid ID format"));
@@ -18,6 +19,14 @@ const getTasksForProject: express.RequestHandler = async (req, res, next) => {
   if (!project) {
     res.status(404);
     return next(Error("Project not found"));
+  }
+
+  if (
+    project.creator.toString() !== userId &&
+    !project.developers.includes(userId)
+  ) {
+    res.status(403);
+    return next(Error("You are not authorized to view this project"));
   }
 
   res.status(200).json(project);
@@ -69,6 +78,7 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
     text,
     status,
     developer,
+    project: projectId,
   });
 
   project.tasks.push(task.id);
@@ -77,4 +87,40 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
   res.status(201).json(task);
 };
 
-export { getTasksForProject, createTaskForProject };
+const deleteTask: express.RequestHandler = async (req, res, next) => {
+  const taskId = req.params.taskId;
+  const userId = req.user?.id;
+
+  if (!mongoose.Types.ObjectId.isValid(taskId)) {
+    res.status(400);
+    return next(Error("Invalid task ID format"));
+  }
+
+  const task = await taskModel.findById(taskId);
+
+  const project = await projectModel.findById(task?.project);
+
+  if (!project) {
+    res.status(404);
+    return next(Error("Project not found"));
+  }
+
+  if (project.creator.toString() !== userId) {
+    res.status(403);
+    return next(Error("You are not authorized to delete this task"));
+  }
+
+  if (!task) {
+    res.status(404);
+    return next(Error("Task not found"));
+  }
+
+  await task.deleteOne();
+
+  project.tasks = project.tasks.filter((t) => t.toString() !== taskId);
+  await project.save();
+
+  res.status(200).json({ message: "Task deleted successfully" });
+};
+
+export { getTasksForProject, createTaskForProject, deleteTask };

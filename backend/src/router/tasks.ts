@@ -3,6 +3,7 @@ import validateToken from "../middleware/validateTokenHandler.ts";
 import {
   getTasksForProject,
   createTaskForProject,
+  deleteTask,
 } from "../controllers/task.ts";
 
 export default (router: express.Router) => {
@@ -12,7 +13,7 @@ export default (router: express.Router) => {
     validateToken,
     createTaskForProject
   );
-  // router.delete("/projects/:id", validateToken, deleteProject);
+  router.delete("/tasks/:taskId", validateToken, deleteTask);
   // router.put("/projects/assign/:id", validateToken, assignUsersToProject);
   // router.put("/projects/remove/:id", validateToken, removeUsersFromProject);
 };
