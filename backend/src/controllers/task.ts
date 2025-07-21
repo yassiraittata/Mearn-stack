@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import { validationResult } from "express-validator";
+import createError from "http-errors";
 
 import projectModel from "../models/project.ts";
 import taskModel from "../models/task.ts";
@@ -9,25 +10,22 @@ import taskModel from "../models/task.ts";
 const getTasksForProject: express.RequestHandler = async (req, res, next) => {
   const projectId = req.params.projectId;
   const userId = req.user?.id;
-  
+
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    res.status(400);
-    return next(Error("Invalid ID format"));
+    return next(createError(400, "Invalid ID format"));
   }
 
   const project = await projectModel.findById(projectId).populate("tasks");
 
   if (!project) {
-    res.status(404);
-    return next(Error("Project not found"));
+    return next(createError(404, "Project not found"));
   }
 
   if (
     project.creator.toString() !== userId &&
     !project.developers.includes(userId)
   ) {
-    res.status(403);
-    return next(Error("You are not authorized to view this project"));
+    return next(createError(403, "You are not authorized to view this project"));
   }
 
   res.status(200).json(project);
@@ -39,8 +37,7 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
   const userId = req.user?.id;
 
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    res.status(400);
-    return next(Error("Invalid project ID format"));
+    return next(createError(400,"Invalid project ID format"));
   }
 
   const { title, text, status, developer } = req.body;
@@ -49,21 +46,18 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
 
   // validate data
   if (!errors.isEmpty()) {
-    res.status(400);
-    return next(Error("All fields are required and must be valid"));
+    return next(createError(400,"All fields are required and must be valid"));
   }
 
   const project = await projectModel.findById(projectId);
 
   if (!project) {
-    res.status(404);
-    return next(Error("Project not found"));
+    return next(createError(404", Project not found"));
   }
 
   if (project.creator.toString() !== userId) {
-    res.status(403);
     return next(
-      Error("You are not authorized to create tasks for this project")
+      createError(403, "You are not authorized to create tasks for this project")
     );
   }
 
@@ -71,8 +65,7 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
 
   if (developer && !developersArr.includes(developer) && developer !== userId) {
     // check if developer is part of the project or he is the creator
-    res.status(400);
-    return next(Error("Developer is not part of the project"));
+    return next(createError(400,"Developer is not part of the project"));
   }
 
   const task = await taskModel.create({
@@ -95,8 +88,7 @@ const deleteTask: express.RequestHandler = async (req, res, next) => {
   const userId = req.user?.id;
 
   if (!mongoose.Types.ObjectId.isValid(taskId)) {
-    res.status(400);
-    return next(Error("Invalid task ID format"));
+    return next(createError(400, "Invalid task ID format"));
   }
 
   const task = await taskModel.findById(taskId);
@@ -104,18 +96,15 @@ const deleteTask: express.RequestHandler = async (req, res, next) => {
   const project = await projectModel.findById(task?.project);
 
   if (!project) {
-    res.status(404);
-    return next(Error("Project not found"));
+    return next(createError(404, "Project not found"));
   }
 
   if (project.creator.toString() !== userId) {
-    res.status(403);
-    return next(Error("You are not authorized to delete this task"));
+    return next(createError(403, "You are not authorized to delete this task"));
   }
 
   if (!task) {
-    res.status(404);
-    return next(Error("Task not found"));
+    return next(createError(404, "Task not found"));
   }
 
   await task.deleteOne();
@@ -132,23 +121,20 @@ const updateTask: express.RequestHandler = async (req, res, next) => {
   const userId = req.user?.id;
 
   if (!mongoose.Types.ObjectId.isValid(taskId)) {
-    res.status(400);
-    return next(Error("Invalid task ID format"));
+    return next(createError(400, "Invalid task ID format"));
   }
 
   const { title, text, status, developer } = req.body;
   const taskItem = await taskModel.findById(taskId);
 
   if (!taskItem) {
-    res.status(404);
-    return next(Error("Task not found"));
+    return next(createError(404, "Task not found"));
   }
 
   const project = await projectModel.findById(taskItem.project);
 
   if (!project) {
-    res.status(404);
-    return next(Error("Project not found"));
+    return next(createError(404, "Project not found"));
   }
 
   // Upate task only if the user is the creator of the project or a developer in the project
@@ -156,16 +142,14 @@ const updateTask: express.RequestHandler = async (req, res, next) => {
     !project.developers.includes(userId) &&
     project.creator.toString() !== userId
   ) {
-    res.status(400);
-    return next(Error("You are not authorized to update this task"));
+    return next(createError(403,"You are not authorized to update this task"));
   }
 
   // validate data
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400);
     return next(
-      Error(
+      createError(400, 
         errors
           .array()
           .map((err) => err.msg)

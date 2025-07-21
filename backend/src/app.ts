@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import createError from "http-errors";
 
 import router from "./router/index.ts";
 import errorHandler from "./middleware/errorHandler.ts";
@@ -23,8 +24,7 @@ app.use((req, res, next) => {
 app.use(router());
 
 app.use((req, res, next) => {
-  res.status(404);
-  next(Error("Endpoint not Found!"));
+  return next(createError(404, "Endpoint not Found!"));
 });
 
 app.use(errorHandler);

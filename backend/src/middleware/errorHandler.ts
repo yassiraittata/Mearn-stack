@@ -8,7 +8,8 @@ const errorHandler = (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const statusCode = res.statusCode ? res.statusCode : 500;
+  const statusCode = err.status ? err.status : 500;
+  res.status(statusCode);
 
   switch (statusCode) {
     case constants.VALIDATION_ERROR:

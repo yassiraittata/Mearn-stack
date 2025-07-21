@@ -1,14 +1,14 @@
 import express from "express";
 import mongoose from "mongoose";
 import { validationResult } from "express-validator";
+import createError from "http-errors";
 
 import projectModel from "../models/project.ts";
 
 const createProject: express.RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400);
-    return next(Error("All fields are required and must be valid"));
+    return next(createError(400, "All fields are required and must be valid"));
   }
   const { title } = req.body;
 
@@ -32,20 +32,19 @@ const deleteProject: express.RequestHandler = async (req, res, next) => {
   const projectId = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    res.status(400);
-    return next(Error("Invalid ID format"));
+    return next(createError(400, "Invalid ID format"));
   }
 
   const project = await projectModel.findById(projectId);
 
   if (!project) {
-    res.status(404);
-    return next(Error("Project not found"));
+    return next(createError(404, "Project not found"));
   }
 
   if (project.creator.toString() !== req.user.id) {
-    res.status(403);
-    return next(Error("You do not have permission to delete this project"));
+    return next(
+      createError(403, "You do not have permission to delete this project")
+    );
   }
 
   await project.deleteOne();
@@ -59,20 +58,19 @@ const assignUsersToProject: express.RequestHandler = async (req, res, next) => {
   const projectId = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    res.status(400);
-    return next(Error("Invalid ID format"));
+    return next(createError(400, "Invalid ID format"));
   }
 
   const project = await projectModel.findById(projectId);
 
   if (!project) {
-    res.status(404);
-    return next(Error("Project not found"));
+    return next(createError(404, "Project not found"));
   }
 
   if (project.creator.toString() !== req.user.id) {
-    res.status(403);
-    return next(Error("You do not have permission to update this project"));
+    return next(
+      createError(403, "You do not have permission to update this project")
+    );
   }
 
   const { developers } = req.body;
@@ -93,20 +91,19 @@ const removeUsersFromProject: express.RequestHandler = async (
   const projectId = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    res.status(400);
-    return next(Error("Invalid ID format"));
+    return next(createError(400, "Invalid ID format"));
   }
 
   const project = await projectModel.findById(projectId);
 
   if (!project) {
-    res.status(404);
-    return next(Error("Project not found"));
+    return next(createError(404, "Project not found"));
   }
 
   if (project.creator.toString() !== req.user.id) {
-    res.status(403);
-    return next(Error("You do not have permission to update this project"));
+    return next(
+      createError(403, "You do not have permission to update this project")
+    );
   }
 
   project.developers = project.developers.filter(
