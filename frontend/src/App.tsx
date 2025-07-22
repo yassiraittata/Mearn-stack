@@ -5,16 +5,23 @@ import "react-toastify/ReactToastify.css";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import PrivetRoute from "./components/routes/PrivateRoutes";
-import Projects from "./components/Projects";
+import Projects from "./pages/Projects";
+import AuthRoutes from "./components/routes/AuthRoutes";
 
 const router = createBrowserRouter([
   {
-    path: "/auth/login",
-    element: <Signin />,
-  },
-  {
-    path: "/auth/signup",
-    element: <Signup />,
+    path: "/auth",
+    element: <AuthRoutes />,
+    children: [
+      {
+        path: "login",
+        element: <Signin />,
+      },
+      {
+        path: "signup",
+        element: <Signup />,
+      },
+    ],
   },
   {
     path: "/",

@@ -1,12 +1,13 @@
 import { useRef } from "react";
 import axios from "../utils/axios";
 import useAuthStore from "../store/auth.ts";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export const SignInForm = () => {
   const emailRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
+  const navigate = useNavigate();
 
   const { setCredentials } = useAuthStore((state) => state);
 
@@ -27,6 +28,7 @@ export const SignInForm = () => {
       const token = resposnse.data.token;
 
       setCredentials({ userInfo: { ...userData, id: userData._id }, token });
+      navigate("/projects", { replace: true });
     } catch (e: unknown) {
       const errors = e.response?.data?.message.split(",") || [];
 
@@ -84,7 +86,7 @@ export const SignInForm = () => {
         Sign In
       </button>
       <Link
-        to="/signup"
+        to="/auth/signup"
         className="block text-center mt-4 text-sm text-primary-500 hover:underline"
       >
         Don't have an account? Sign Up
