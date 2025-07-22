@@ -1,16 +1,29 @@
 import { useRef } from "react";
+import axios from "../utils/axios";
+import useAuthStore from "../store/auth.ts";
 
 export const SignInForm = () => {
   const emailRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
 
-  function submitHandler(event: React.FormEvent) {
+  const { setCredentials } = useAuthStore((state) => state);
+
+  async function submitHandler(event: React.FormEvent) {
     event.preventDefault();
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
 
     // Handle sign-in logic here, e.g., API call
-    console.log("Email:", email, "Password:", password);
+    const user = {
+      email,
+      password,
+    };
+    const resposnse = await axios.post("/auth/signin", user);
+    console.log("Sign-in response:", resposnse);
+    const userData = resposnse.data.user;
+    const token = resposnse.data.token;
+
+    setCredentials({ userInfo: { ...userData, id: userData._id }, token });
   }
 
   return (

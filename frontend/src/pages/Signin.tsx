@@ -10,7 +10,7 @@ const Signin = () => {
             <span className="text-primary-600 text-sm font-medium">.com</span>
           </h1>
         </div>
-        <div className=" w-full grow flex items-center justify-center">
+        <div className="w-full grow flex items-center justify-center">
           <SignInForm />
         </div>
         <div className="mt-auto text-gray-400 text-xs text-center">
@@ -24,7 +24,7 @@ const Signin = () => {
             <div className="underline text-primary-50">Track.</div>{" "}
             <div className="underline text-primary-50">Done.</div>
           </p>
-          <h1 className="text-white text-5xl font-extrabold text-center leading-16 italic">
+          <h1 className="text-white text-6xl font-extrabold text-center leading-16 italic">
             From <b className="text-primary-100">Chaos</b> {""}
             to <b className="text-primary-100">Clarity </b> <br />
             Your Projects, Organized.
