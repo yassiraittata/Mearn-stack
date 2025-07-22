@@ -25,7 +25,9 @@ const getTasksForProject: express.RequestHandler = async (req, res, next) => {
     project.creator.toString() !== userId &&
     !project.developers.includes(userId)
   ) {
-    return next(createError(403, "You are not authorized to view this project"));
+    return next(
+      createError(403, "You are not authorized to view this project")
+    );
   }
 
   res.status(200).json(project);
@@ -37,7 +39,7 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
   const userId = req.user?.id;
 
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
-    return next(createError(400,"Invalid project ID format"));
+    return next(createError(400, "Invalid project ID format"));
   }
 
   const { title, text, status, developer } = req.body;
@@ -46,18 +48,21 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
 
   // validate data
   if (!errors.isEmpty()) {
-    return next(createError(400,"All fields are required and must be valid"));
+    return next(createError(400, "All fields are required and must be valid"));
   }
 
   const project = await projectModel.findById(projectId);
 
   if (!project) {
-    return next(createError(404", Project not found"));
+    return next(createError(404, "Project not found"));
   }
 
   if (project.creator.toString() !== userId) {
     return next(
-      createError(403, "You are not authorized to create tasks for this project")
+      createError(
+        403,
+        "You are not authorized to create tasks for this project"
+      )
     );
   }
 
@@ -65,7 +70,7 @@ const createTaskForProject: express.RequestHandler = async (req, res, next) => {
 
   if (developer && !developersArr.includes(developer) && developer !== userId) {
     // check if developer is part of the project or he is the creator
-    return next(createError(400,"Developer is not part of the project"));
+    return next(createError(400, "Developer is not part of the project"));
   }
 
   const task = await taskModel.create({
@@ -142,14 +147,15 @@ const updateTask: express.RequestHandler = async (req, res, next) => {
     !project.developers.includes(userId) &&
     project.creator.toString() !== userId
   ) {
-    return next(createError(403,"You are not authorized to update this task"));
+    return next(createError(403, "You are not authorized to update this task"));
   }
 
   // validate data
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      createError(400, 
+      createError(
+        400,
         errors
           .array()
           .map((err) => err.msg)

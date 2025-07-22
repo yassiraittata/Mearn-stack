@@ -1,0 +1,50 @@
+import { create } from "zustand";
+
+type User = {
+  id: string;
+  email: string;
+  name: string;
+};
+
+type AuthState = {
+  userInfo: User | null;
+  token: string | null;
+  setCredentials: (
+    state: AuthState,
+    action: { payload: { User: User; token: string } }
+  ) => void;
+  logout: (state: AuthState) => void;
+};
+
+const useAuthStore = create<AuthState>((set) => ({
+  userInfo: localStorage.getItem("userInfo")
+    ? JSON.parse(localStorage.getItem("userInfo") || "")
+    : null,
+  token: localStorage.getItem("token")
+    ? JSON.parse(localStorage.getItem("token") || "")
+    : null,
+
+  setCredentials: (state, action) => {
+    // state.userInfo = action.payload.User;
+    // state.token = action.payload.token; // Assuming the token is the user ID for simplicity
+    set((state) => ({
+      userInfo: action.payload.User,
+      token: action.payload.token,
+    }));
+    localStorage.setItem("userInfo", JSON.stringify(action.payload));
+    const expirationTime = new Date().getTime() + 15 * 24 * 60 * 60 * 1000; // set expiration date (15 days)
+    localStorage.setItem("expirationTime", expirationTime.toString());
+  },
+
+  logout: (state) => {
+    set(() => ({
+      userInfo: null,
+      token: null,
+    }));
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("expirationTime");
+    localStorage.removeItem("token");
+  },
+}));
+
+export default useAuthStore;

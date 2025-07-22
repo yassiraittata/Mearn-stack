@@ -49,9 +49,11 @@ const deleteProject: express.RequestHandler = async (req, res, next) => {
 
   await project.deleteOne();
 
-  res.status(200).json({
-    message: "Project deleted successfully",
-  });
+  // res.status(204).json({
+  //   message: "Project deleted successfully",
+  // });
+
+  res.sendStatus(204); // No Content response
 };
 
 const assignUsersToProject: express.RequestHandler = async (req, res, next) => {
