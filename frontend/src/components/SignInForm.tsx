@@ -2,6 +2,7 @@ import { useRef } from "react";
 import axios from "../utils/axios";
 import useAuthStore from "../store/auth.ts";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const SignInForm = () => {
   const emailRef = useRef<HTMLInputElement>();
@@ -10,21 +11,38 @@ export const SignInForm = () => {
   const { setCredentials } = useAuthStore((state) => state);
 
   async function submitHandler(event: React.FormEvent) {
-    event.preventDefault();
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
+    try {
+      event.preventDefault();
+      const email = emailRef.current?.value;
+      const password = passwordRef.current?.value;
 
-    // Handle sign-in logic here, e.g., API call
-    const user = {
-      email,
-      password,
-    };
-    const resposnse = await axios.post("/auth/signin", user);
-    console.log("Sign-in response:", resposnse);
-    const userData = resposnse.data.user;
-    const token = resposnse.data.token;
+      // Handle sign-in logic here, e.g., API call
+      const user = {
+        email,
+        password,
+      };
+      const resposnse = await axios.post("/auth/signin", user);
+      console.log("Sign-in response:", resposnse);
+      const userData = resposnse.data.user;
+      const token = resposnse.data.token;
 
-    setCredentials({ userInfo: { ...userData, id: userData._id }, token });
+      setCredentials({ userInfo: { ...userData, id: userData._id }, token });
+    } catch (e: unknown) {
+      const errors = e.response?.data?.message.split(",") || [];
+
+      errors.forEach((err: string) =>
+        toast.error(err.trim(), {
+          position: "top-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        })
+      );
+    }
   }
 
   return (
