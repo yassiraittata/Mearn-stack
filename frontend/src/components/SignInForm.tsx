@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import axios from "../utils/axios";
 import useAuthStore from "../store/auth.ts";
+import { Link } from "react-router-dom";
 
 export const SignInForm = () => {
   const emailRef = useRef<HTMLInputElement>();
@@ -28,6 +29,12 @@ export const SignInForm = () => {
 
   return (
     <form className="w-full max-w-sm text-white" onSubmit={submitHandler}>
+      <div className="mb-10">
+        <h3 className="text-white text-3xl font-bold">Welcome back</h3>
+        <p className="text-sm font-medium text-gray-500">
+          Sign in to your account
+        </p>
+      </div>
       <div className="mb-6">
         <label className="block text-white mb-2 text-sm" htmlFor="email">
           Email
@@ -58,6 +65,12 @@ export const SignInForm = () => {
       >
         Sign In
       </button>
+      <Link
+        to="/signup"
+        className="block text-center mt-4 text-sm text-primary-500 hover:underline"
+      >
+        Don't have an account? Sign Up
+      </Link>
     </form>
   );
 };

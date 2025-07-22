@@ -20,3 +20,27 @@
 body {
   font-family: "Nunito", sans-serif;
 }
+
+.Toastify__toast {
+  font-size: 12px; /* or any size you prefer */
+}
+
+/* For success toasts */
+.Toastify__toast--success .Toastify__progress-bar {
+  background: green;
+}
+
+/* For error toasts */
+.Toastify__toast--error .Toastify__progress-bar {
+  background: #f44336;
+}
+
+/* For info toasts */
+.Toastify__toast--info .Toastify__progress-bar {
+  background: #3498db;
+}
+
+/* For warning toasts */
+.Toastify__toast--warn .Toastify__progress-bar {
+  background: orange;
+}

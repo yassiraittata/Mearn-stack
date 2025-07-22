@@ -10,7 +10,11 @@ const signup: express.RequestHandler = async (req, res, next) => {
   // validate data
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(createError(400, "All feilds are required and must be valid"));
+    const errorMessages = errors
+      .array()
+      .map((err) => err.msg)
+      .join(", ");
+    return next(createError(400, errorMessages));
   }
 
   const { name, email, password } = req.body;
@@ -36,7 +40,11 @@ const signup: express.RequestHandler = async (req, res, next) => {
 const signin: express.RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(createError(400, "All feilds are required and must be valid"));
+    const errorMessages = errors
+      .array()
+      .map((err) => err.msg)
+      .join(", ");
+    return next(createError(400, errorMessages));
   }
 
   const { email, password } = req.body;
