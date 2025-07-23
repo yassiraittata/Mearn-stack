@@ -15,10 +15,15 @@
   --color-primary-800: #004a48;
   --color-primary-900: #00403e;
   --color-primary-950: #002a29;
+
+  --color-light-gray: #dddad0;
+  --color-dark-gray: #57564f;
 }
 
 body {
   font-family: "Nunito", sans-serif;
+  background-color: var(--color-secondary-dark);
+  color: var(--color-light-gray);
 }
 
 .Toastify__toast {
