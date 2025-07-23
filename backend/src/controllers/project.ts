@@ -10,7 +10,7 @@ const createProject: express.RequestHandler = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return next(createError(400, "All fields are required and must be valid"));
   }
-  const { title } = req.body;
+  const { title, description } = req.body;
 
   const creator = req.user.id;
 
@@ -18,6 +18,7 @@ const createProject: express.RequestHandler = async (req, res, next) => {
 
   const project = await projectModel.create({
     title,
+    description,
     creator,
     developers,
   });

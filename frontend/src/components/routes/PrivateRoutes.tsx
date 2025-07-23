@@ -3,6 +3,7 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import useAuthStore from "../../store/auth";
+import Header from "../Header";
 
 export default function PrivetRoute() {
   const userInfo = useAuthStore((state) => state.userInfo);
@@ -51,5 +52,12 @@ export default function PrivetRoute() {
     return () => clearTimeout(timeoutId);
   }, [logout]);
 
-  return userInfo && token ? <Outlet /> : <Navigate to="/auth/login" />;
+  return userInfo && token ? (
+    <>
+      <Header onLogout={() => {}} />
+      <Outlet />
+    </>
+  ) : (
+    <Navigate to="/auth/login" />
+  );
 }
