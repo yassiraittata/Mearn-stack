@@ -10,7 +10,7 @@ export function generateToken(user: User) {
   const token = jwt.sign(
     { id: user._id, email: user.email },
     process.env.JWT_SECRET as string,
-    { expiresIn: "1h" }
+    { expiresIn: "15d" }
   );
 
   const userObject = user.toObject() as Record<string, any>;

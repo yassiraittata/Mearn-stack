@@ -23,7 +23,7 @@ export const SignInForm = () => {
         password,
       };
       const resposnse = await axios.post("/auth/signin", user);
-      console.log("Sign-in response:", resposnse);
+
       const userData = resposnse.data.user;
       const token = resposnse.data.token;
 
