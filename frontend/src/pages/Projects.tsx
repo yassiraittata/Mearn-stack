@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import ProjectItem from "../components/ProjectItem";
 import ProjectsLoader from "../components/ProjectsLoader";
 import axios from "../utils/axios";
-
-type Project = {
-  id: string;
-  title: string;
-  description: string;
-};
+import { type Project } from "../models/project";
 
 const Projects = () => {
   const [projectsList, setProjectsList] = useState<Project[]>([]);
@@ -22,7 +17,6 @@ const Projects = () => {
           ...el,
           id: el._id,
         })) as Project[];
-        console.log("Projects fetched:", response);
         setProjectsList(projects);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -59,7 +53,7 @@ const Projects = () => {
               {projectsList.map((project) => (
                 <ProjectItem
                   key={project.id}
-                  id={project.id}
+                  id={project.id!}
                   title={project.title}
                   description={project.description}
                 />

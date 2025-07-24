@@ -1,12 +1,78 @@
 import { useRef, useState, type TextareaHTMLAttributes } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "../utils/axios";
 
 export const CreateProject = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate();
 
-  function submitHandler() {}
+  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const title = titleRef.current?.value;
+    const description = descriptionRef.current?.value;
+
+    if (!title || !description) {
+      toast.error("All feilds are required", {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const projectData = {
+        title,
+        description,
+      };
+
+      const response = await axios.post("/projects/create", projectData);
+      console.log("Project created:", response);
+      if (response.status === 201) {
+        toast.success("Project created successfully", {
+          position: "top-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        titleRef.current!.value = "";
+        descriptionRef.current!.value = "";
+        navigate("/projects");
+      } else {
+        throw new Error("Failed to create project");
+      }
+      setIsLoading(false);
+    } catch (error) {
+      toast.error("An error occurred while creating the project", {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setIsLoading(false);
+      return;
+    }
+  }
 
   return (
     <>
@@ -45,6 +111,7 @@ export const CreateProject = () => {
 
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-primary-500 hover:bg-primary-700   p-2 rounded-md cursor-pointer flex items-center justify-center"
           >
             {isLoading ? (

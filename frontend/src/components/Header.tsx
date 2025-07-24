@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import useAuthStore from "../store/auth";
 
 const Header = () => {
@@ -9,6 +10,14 @@ const Header = () => {
           Manager
           <span className="text-primary-600 text-sm font-medium">.com</span>
         </h1>
+        <ul className="flex items-center gap-6">
+          <li className=" hover:text-primary-400 transition-colors duration-200">
+            <Link to="/projects">Projects</Link>
+          </li>
+          <li className=" hover:text-primary-400 transition-colors duration-200">
+            <Link to="/projects/create">New project</Link>
+          </li>
+        </ul>
         <div className="flex items-center gap-4">
           <img
             src="https://i.pravatar.cc/40"
