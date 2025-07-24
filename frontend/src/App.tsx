@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import PrivetRoute from "./components/routes/PrivateRoutes";
 import Projects from "./pages/Projects";
 import AuthRoutes from "./components/routes/AuthRoutes";
+import { CreateProject } from "./pages/CreateProject";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/projects",
         element: <Projects />,
+      },
+      {
+        path: "/projects/create",
+        element: <CreateProject />,
       },
     ],
   },
