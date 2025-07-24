@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 import useAuthStore from "../../store/auth";
 import Header from "../Header";
+import { showErrorToast } from "../../utils/toast";
 
 export default function PrivetRoute() {
   const userInfo = useAuthStore((state) => state.userInfo);
@@ -37,16 +38,7 @@ export default function PrivetRoute() {
     const timeoutId = setTimeout(() => {
       logout();
       navigate("/auth/login");
-      toast.error("Your session is expired, Please sign in!", {
-        position: "top-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      showErrorToast("Your session is expired, Please sign in!");
     }, expiresIn);
 
     return () => clearTimeout(timeoutId);

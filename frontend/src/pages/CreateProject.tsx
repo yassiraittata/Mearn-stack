@@ -1,7 +1,7 @@
 import { useRef, useState, type TextareaHTMLAttributes } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import axios from "../utils/axios";
+import { showErrorToast, showSuccessToast } from "../utils/toast";
 
 export const CreateProject = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -17,16 +17,7 @@ export const CreateProject = () => {
     const description = descriptionRef.current?.value;
 
     if (!title || !description) {
-      toast.error("All feilds are required", {
-        position: "top-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      showErrorToast("All feilds are required");
       return;
     }
 
@@ -41,16 +32,7 @@ export const CreateProject = () => {
       const response = await axios.post("/projects/create", projectData);
       console.log("Project created:", response);
       if (response.status === 201) {
-        toast.success("Project created successfully", {
-          position: "top-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        showSuccessToast("Project created successfully");
         titleRef.current!.value = "";
         descriptionRef.current!.value = "";
         navigate("/projects");
@@ -59,16 +41,7 @@ export const CreateProject = () => {
       }
       setIsLoading(false);
     } catch (error) {
-      toast.error("An error occurred while creating the project", {
-        position: "top-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      showErrorToast("An error occurred while creating the project");
       setIsLoading(false);
       return;
     }

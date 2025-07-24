@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
-import { toast, Bounce } from "react-toastify";
 import axios from "../utils/axios";
 import { Link, useNavigate } from "react-router-dom";
 
 import useAuthStore from "../store/auth.ts";
+import { showErrorToast } from "../utils/toast.ts";
 
 export const SignUpForm = () => {
   const nameRef = useRef<HTMLInputElement>();
@@ -46,19 +46,7 @@ export const SignUpForm = () => {
       const errors = error.response?.data?.message.split(",") || [];
 
       if (errors.length > 0) {
-        errors.forEach((err: string) =>
-          toast.error(err.trim(), {
-            position: "top-left",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-            transition: Bounce,
-          })
-        );
+        errors.forEach((err: string) => showErrorToast(err.trim()));
       }
     }
   }

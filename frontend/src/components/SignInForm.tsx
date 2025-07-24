@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import axios from "../utils/axios";
 import useAuthStore from "../store/auth.ts";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { showErrorToast } from "../utils/toast.ts";
 
 export const SignInForm = () => {
   const emailRef = useRef<HTMLInputElement>();
@@ -36,18 +36,7 @@ export const SignInForm = () => {
     } catch (e: unknown) {
       const errors = e.response?.data?.message.split(",") || [];
 
-      errors.forEach((err: string) =>
-        toast.error(err.trim(), {
-          position: "top-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        })
-      );
+      errors.forEach((err: string) => showErrorToast(err.trim()));
     }
   }
 
