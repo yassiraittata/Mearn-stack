@@ -1,29 +1,83 @@
 import { Link } from "react-router-dom";
+import { showErrorToast, showSuccessToast } from "../utils/toast";
+import axios from "../utils/axios";
+import { useState } from "react";
+import { DeleteModal } from "./UI/DeleteModal";
 
 type ProjectItemProps = {
   id: string;
   title: string;
   description: string;
+  removeProject: (id: string) => void;
 };
 
-function ProjectItem({ id, title, description }: ProjectItemProps) {
+function ProjectItem({
+  id,
+  title,
+  description,
+  removeProject,
+}: ProjectItemProps) {
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleDelete() {
+    setIsLoading(true);
+    try {
+      // Logic to handle project deletion
+      const response = await axios.delete(`/projects/${id}`);
+      if (response.status !== 204) {
+        throw new Error("Failed to delete project");
+      }
+
+      console.log("Project deleted", response);
+      showSuccessToast("Project deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      showErrorToast(
+        error.response.data.message ||
+          "Failed to delete project. Please try again."
+      );
+    }
+    setIsLoading(false);
+    setDeleteModalVisible(false);
+    removeProject(id);
+  }
+
   return (
-    <li className="bg-primary-dark p-5 shadow-lg">
-      <h2 className="text-xl font-semibold ">{title}</h2>
-      <p className="mt-2 text-gray-300 text-sm ">
-        {description.length > 100
-          ? `${description.substring(0, 100)}...`
-          : description}
-      </p>
-      <div className="mt-6">
-        <Link
-          to={`/projects/${id}`}
-          className="text-primary-500 block font-semibold hover:texty-primary-600 transition-colors duration-300"
-        >
-          View Details
-        </Link>
-      </div>
-    </li>
+    <>
+      {deleteModalVisible && (
+        <DeleteModal
+          cancelDelete={() => setDeleteModalVisible(false)}
+          deletHandler={handleDelete}
+          isLoading={isLoading}
+        />
+      )}
+      <li className="bg-primary-dark p-5 shadow-lg">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold ">{title}</h2>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-white bg-red-900 rounded-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
+            onClick={() => setDeleteModalVisible(true)}
+          >
+            Delete
+          </button>
+        </div>
+        <p className="mt-2 text-gray-300 text-sm ">
+          {description.length > 100
+            ? `${description.substring(0, 100)}...`
+            : description}
+        </p>
+        <div className="mt-6">
+          <Link
+            to={`/projects/${id}`}
+            className="text-primary-500 block font-semibold hover:texty-primary-600 transition-colors duration-300"
+          >
+            View Details
+          </Link>
+        </div>
+      </li>
+    </>
   );
 }
 

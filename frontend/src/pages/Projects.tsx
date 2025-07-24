@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import ProjectItem from "../components/ProjectItem";
-import ProjectsLoader from "../components/ProjectsLoader";
+
 import axios from "../utils/axios";
 import { type Project } from "../models/project";
+import ProjectItem from "../components/ProjectItem";
+import ProjectsLoading from "../components/UI/ProjectsLoading";
 
 const Projects = () => {
   const [projectsList, setProjectsList] = useState<Project[]>([]);
@@ -13,7 +14,7 @@ const Projects = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get("/projects");
-        const projects = response.data.map((el) => ({
+        const projects = response.data.map((el: Project) => ({
           ...el,
           id: el._id,
         })) as Project[];
@@ -28,6 +29,10 @@ const Projects = () => {
     fetchProjects();
   }, []);
 
+  function removeProject(id: string) {
+    setProjectsList((prev) => prev.filter((project) => project.id !== id));
+  }
+
   return (
     <>
       <section className="max-w-7xl mx-auto px-4 py-16">
@@ -38,16 +43,7 @@ const Projects = () => {
           Here you can find a list of projects that you have worked on.
         </p>
         <div className="mt-16">
-          {loading && (
-            <div className="grid grid-cols-3 gap-5 mb-8">
-              <ProjectsLoader />
-              <ProjectsLoader />
-              <ProjectsLoader />
-              <ProjectsLoader />
-              <ProjectsLoader />
-              <ProjectsLoader />
-            </div>
-          )}
+          {loading && <ProjectsLoading />}
           {projectsList.length > 0 && (
             <ul className="grid grid-cols-3 gap-5">
               {projectsList.map((project) => (
@@ -56,6 +52,7 @@ const Projects = () => {
                   id={project.id!}
                   title={project.title}
                   description={project.description}
+                  removeProject={removeProject}
                 />
               ))}
             </ul>
