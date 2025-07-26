@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
 import { showErrorToast, showSuccessToast } from "../utils/toast";
 
-export const CreateProject = () => {
+const CreateProject = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const titleRef = useRef<HTMLInputElement>(null);
@@ -107,3 +107,5 @@ export const CreateProject = () => {
     </>
   );
 };
+
+export default CreateProject;

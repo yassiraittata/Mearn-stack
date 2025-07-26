@@ -52,12 +52,12 @@ function ProjectItem({
           isLoading={isLoading}
         />
       )}
-      <li className="bg-primary-dark p-5 shadow-lg">
+      <li className="bg-primary-dark p-5 shadow-lg group">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold ">{title}</h2>
           <button
             type="button"
-            className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-white bg-red-900 rounded-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
+            className="group-hover:inline-flex hidden items-center gap-1 px-2 py-1 text-xs font-semibold text-white bg-red-900 rounded-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
             onClick={() => setDeleteModalVisible(true)}
           >
             Delete
