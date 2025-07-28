@@ -12,7 +12,7 @@ function Column({ status, tasks }: { status: string; tasks: Task[] }) {
       <h1 className="text-3xl font-extrabold text-white  p-3 mb-4 first-letter:uppercase ">
         {status}
       </h1>
-      <div className="space-y-5">
+      <div className="space-y-5 flex flex-col">
         {tasks.map((task) => (
           <TodoItem key={task._id} task={task} />
         ))}
