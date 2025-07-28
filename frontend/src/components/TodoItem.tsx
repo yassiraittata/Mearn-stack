@@ -16,7 +16,7 @@ function TodoItem({ task }: { task: Task }) {
       {...listeners}
       {...attributes}
       style={style}
-      className="bg-gray-600 p-5 mb-5 rounded-3xl text-white cursor-grab "
+      className="bg-[#3d3d3d] p-5 mb-5 rounded-xl text-white cursor-grab "
     >
       <h3 className="font-bold text-lg mb-3">{task.title}</h3>
       <p className="text-sm text-gray-300 font-medium">
