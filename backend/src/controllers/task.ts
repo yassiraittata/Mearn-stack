@@ -15,7 +15,10 @@ const getTasksForProject: express.RequestHandler = async (req, res, next) => {
     return next(createError(400, "Invalid ID format"));
   }
 
-  const project = await projectModel.findById(projectId).populate("tasks");
+  const project = await projectModel
+    .findById(projectId)
+    .populate("tasks")
+    .populate("developers");
 
   if (!project) {
     return next(createError(404, "Project not found"));

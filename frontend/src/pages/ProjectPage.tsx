@@ -2,29 +2,27 @@ import { useState, useEffect } from "react";
 import type { Project } from "../models/project";
 import { useParams } from "react-router-dom";
 
-import axios from "../utils/axios";
 import { showErrorToast } from "../utils/toast";
 import ProjectPageLoader from "../components/UI/ProjectPageLoader";
 import Board from "../components/Board";
-import type { Task } from "../models/tasks";
-import { groupTasksByStatus } from "../utils/tasks";
+import useTasksStore from "../store/tasks";
+import type { User } from "../models/User";
 
 function ProjectPage() {
   const [project, setProject] = useState<Project>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [tasks, setTasks] = useState<Record<string, Task[]>>({});
 
   const { projectId } = useParams<{ projectId: string }>();
+  const { getTasksList } = useTasksStore();
 
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const response = await axios.get(`/projects/${projectId}/tasks`);
-        console.log("Project fetched:", response);
-        setProject({ ...response.data, id: response.data._id });
-
-        setTasks(groupTasksByStatus(response.data.tasks));
-      } catch (err) {
+        if (!projectId) return;
+        const project = await getTasksList(projectId);
+        setProject(project);
+      } catch (err: unknown) {
+        console.log(err);
         showErrorToast("Failed to fetch project details");
       } finally {
         setLoading(false);
@@ -32,7 +30,7 @@ function ProjectPage() {
     };
 
     fetchProject();
-  }, [projectId]);
+  }, [projectId, getTasksList]);
 
   if (loading) {
     return <ProjectPageLoader />;
@@ -41,12 +39,26 @@ function ProjectPage() {
   return (
     <>
       <section className="max-w-7xl mx-auto px-4 py-16">
-        <h1 className="text-4xl font-extrabold border-l-4 pl-3 border-primary-500">
-          {project?.title}
-        </h1>
-        <p className="mt-2 text-gray-400">{project?.description}</p>
+        <div className="flex items-start justify-between w-full">
+          <div>
+            <h1 className="text-4xl font-extrabold border-l-4 pl-3 border-primary-500">
+              {project?.title}
+            </h1>
+            <p className="mt-2 text-gray-400">{project?.description}</p>
+          </div>
+          <div className="flex -space-x-2">
+            {project?.developers &&
+              (project.developers as User[]).map((item) => (
+                <div className="flex size-10 rounded-full ring-2 bg-blue-800 items-center justify-center pr-2 uppercase font-bold text-sm">
+                  {item.name?.substring(0, 2)}
+                </div>
+              ))}
+
+            <button className="inline-block size-10 rounded-full ring-2 ring-white bg-white"></button>
+          </div>
+        </div>
         <div className="mt-16">
-          <Board tasks={tasks} />
+          <Board />
         </div>
       </section>
     </>

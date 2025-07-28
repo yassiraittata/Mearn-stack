@@ -1,20 +1,21 @@
-import {
-  DndContext,
-  closestCorners,
-  useSensor,
-  useSensors,
-  PointerSensor,
-} from "@dnd-kit/core";
-import { useState } from "react";
+import { DndContext, closestCorners } from "@dnd-kit/core";
+import { useEffect, useState } from "react";
 import type { Task } from "../models/tasks";
 import Column from "./Column";
 import axios from "../utils/axios";
-import { showErrorToast, showSuccessToast } from "../utils/toast";
+import { showErrorToast } from "../utils/toast";
+import { groupTasksByStatus } from "../utils/tasks";
+import useTasksStore from "../store/tasks";
 
-const Board = ({ tasks }: { tasks: Record<string, Task[]> }) => {
-  const [tasksByStatus, setTasksByStatus] = useState(tasks); // initial from props or API
+const Board = () => {
+  const [tasksByStatus, setTasksByStatus] = useState<Record<string, Task[]>>(
+    {}
+  );
+  const { tasks } = useTasksStore((state) => state);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  useEffect(() => {
+    setTasksByStatus(groupTasksByStatus(tasks));
+  }, [tasks]);
 
   const handleDragEnd = async ({ active, over }) => {
     if (!over) return;
@@ -53,18 +54,15 @@ const Board = ({ tasks }: { tasks: Record<string, Task[]> }) => {
       });
 
       if (res.status != 200) throw new Error("something went wrong");
-    } catch (err) {
+    } catch (err: any) {
       const message = err.response.data.message || "Something went wrog!";
+
       showErrorToast(message);
     }
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragEnd={handleDragEnd}
-    >
+    <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
       <div className="min-h-[70vh] mt-16 grid grid-cols-3 gap-10">
         {Object.entries(tasksByStatus).map(([status, tasks]) => (
           <Column key={status} status={status} tasks={tasks} />

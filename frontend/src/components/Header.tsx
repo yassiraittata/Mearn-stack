@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import useAuthStore from "../store/auth";
 
 const Header = () => {
-  const { logout } = useAuthStore((state) => state);
+  const { logout, userInfo } = useAuthStore((state) => state);
   return (
     <header className="w-full p-2 bg-primary-dark border-b border-gray-700 shadow-md">
       <div className="max-w-7xl w-full mx-auto  flex items-center justify-between ">
@@ -19,11 +19,9 @@ const Header = () => {
           </li>
         </ul>
         <div className="flex items-center gap-4">
-          <img
-            src="https://i.pravatar.cc/40"
-            alt="Profile Avatar"
-            className="w-10 h-10 rounded-full object-cover"
-          />
+          <div className="w-16  h-10 rounded-full bg-blue-800 shadow-md flex items-center justify-center uppercase text-lg font-bold">
+            {userInfo?.name.substring(0, 2)}
+          </div>
 
           <button
             className="nav-button hover:drop-shadow-lg flex w-full items-center justify-center rounded-full border border-red-200 bg-red-200 px-7 py-2 text-base font-bold text-secondary-dark ring-lime-600 ring-offset-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"

@@ -30,7 +30,7 @@ const Projects = () => {
   }, []);
 
   function removeProject(id: string) {
-    setProjectsList((prev) => prev.filter((project) => project.id !== id));
+    setProjectsList((prev) => prev.filter((project) => project._id !== id));
   }
 
   return (
@@ -48,8 +48,8 @@ const Projects = () => {
             <ul className="grid grid-cols-3 gap-5">
               {projectsList.map((project) => (
                 <ProjectItem
-                  key={project.id}
-                  id={project.id!}
+                  key={project._id}
+                  id={project._id!}
                   title={project.title}
                   description={project.description}
                   removeProject={removeProject}
