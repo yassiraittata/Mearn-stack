@@ -31,6 +31,7 @@ const useProjectsStore = create<TasksState>((set, get) => ({
   },
 
   async deleteProject(id: string) {
+    set({ isLoading: true });
     try {
       const response = await axios.delete(`/projects/${id}`);
 
@@ -47,6 +48,7 @@ const useProjectsStore = create<TasksState>((set, get) => ({
 
       throw new Error(message);
     }
+    set({ isLoading: false });
   },
 }));
 

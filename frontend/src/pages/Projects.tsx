@@ -16,10 +16,6 @@ const Projects = () => {
     getProjectsList();
   }, [getProjectsList]);
 
-  function removeProject(id: string) {
-    // setProjectsList((prev) => prev.filter((project) => project._id !== id));
-  }
-
   return (
     <>
       <section className="max-w-7xl mx-auto px-4 py-16">
@@ -39,7 +35,6 @@ const Projects = () => {
                   id={project._id!}
                   title={project.title}
                   description={project.description}
-                  removeProject={removeProject}
                 />
               ))}
             </ul>

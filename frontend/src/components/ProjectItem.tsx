@@ -13,12 +13,10 @@ type ProjectItemProps = {
 
 function ProjectItem({ id, title, description }: ProjectItemProps) {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const { deleteProject } = useProjectsStore((state) => state);
+  const { deleteProject, isLoading } = useProjectsStore((state) => state);
 
   async function handleDelete() {
-    // setIsLoading(true);
     try {
       deleteProject(id);
 
