@@ -1,36 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-import axios from "../utils/axios";
-import { type Project } from "../models/project";
 import ProjectItem from "../components/ProjectItem";
 import ProjectsLoading from "../components/UI/ProjectsLoading";
+import useProjectsStore from "../store/projects";
 
 const Projects = () => {
-  const [projectsList, setProjectsList] = useState<Project[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    isLoading,
+    error,
+    getProjectsList,
+    projects: projectsList,
+  } = useProjectsStore((state) => state);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await axios.get("/projects");
-        const projects = response.data.map((el: Project) => ({
-          ...el,
-          id: el._id,
-        })) as Project[];
-        setProjectsList(projects);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, []);
+    getProjectsList();
+  }, [getProjectsList]);
 
   function removeProject(id: string) {
-    setProjectsList((prev) => prev.filter((project) => project._id !== id));
+    // setProjectsList((prev) => prev.filter((project) => project._id !== id));
   }
 
   return (
@@ -43,7 +30,7 @@ const Projects = () => {
           Here you can find a list of projects that you have worked on.
         </p>
         <div className="mt-16">
-          {loading && <ProjectsLoading />}
+          {isLoading && <ProjectsLoading />}
           {projectsList.length > 0 && (
             <ul className="grid grid-cols-3 gap-5">
               {projectsList.map((project) => (
@@ -83,7 +70,7 @@ const Projects = () => {
               </div>
             </div>
           )}
-          {!loading && projectsList.length === 0 && !error && (
+          {!isLoading && projectsList.length === 0 && !error && (
             <div className="flex flex-col items-center gap-4 mt-32">
               <div className="flex flex-col items-start gap-2 bg-gray-800 p-5 rounded-full">
                 <svg

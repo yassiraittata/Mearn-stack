@@ -3,44 +3,33 @@ import { showErrorToast, showSuccessToast } from "../utils/toast";
 import axios from "../utils/axios";
 import { useState } from "react";
 import { DeleteModal } from "./UI/DeleteModal";
+import useProjectsStore from "../store/projects";
 
 type ProjectItemProps = {
   id: string;
   title: string;
   description: string;
-  removeProject: (id: string) => void;
 };
 
-function ProjectItem({
-  id,
-  title,
-  description,
-  removeProject,
-}: ProjectItemProps) {
+function ProjectItem({ id, title, description }: ProjectItemProps) {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleDelete() {
-    setIsLoading(true);
-    try {
-      // Logic to handle project deletion
-      const response = await axios.delete(`/projects/${id}`);
-      if (response.status !== 204) {
-        throw new Error("Failed to delete project");
-      }
+  const { deleteProject } = useProjectsStore((state) => state);
 
-      console.log("Project deleted", response);
+  async function handleDelete() {
+    // setIsLoading(true);
+    try {
+      deleteProject(id);
+
       showSuccessToast("Project deleted successfully.");
+      setDeleteModalVisible(false);
     } catch (error) {
-      console.error("Error deleting project:", error);
+      console.log(error);
       showErrorToast(
-        error.response.data.message ||
-          "Failed to delete project. Please try again."
+        error.message || "Failed to delete project. Please try again."
       );
     }
-    setIsLoading(false);
-    setDeleteModalVisible(false);
-    removeProject(id);
   }
 
   return (
