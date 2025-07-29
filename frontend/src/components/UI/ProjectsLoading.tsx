@@ -1,4 +1,4 @@
-import ProjectsLoader from "../ProjectsLoader";
+import ProjectsLoader from "./ProjectsLoader";
 
 function ProjectsLoading() {
   return (
