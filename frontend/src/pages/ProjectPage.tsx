@@ -49,12 +49,17 @@ function ProjectPage() {
           <div className="flex -space-x-2">
             {project?.developers &&
               (project.developers as User[]).map((item) => (
-                <div className="flex size-10 rounded-full ring-2 bg-blue-800 items-center justify-center pr-2 uppercase font-bold text-sm">
+                <div
+                  className="flex size-10 rounded-full ring-2 bg-blue-800 items-center justify-center pr-2 uppercase font-bold text-sm"
+                  key={item._id}
+                >
                   {item.name?.substring(0, 2)}
                 </div>
               ))}
 
-            <button className="inline-block size-10 rounded-full ring-2 ring-white bg-white"></button>
+            <button className="inline-block size-10 rounded-full ring-2 ring-white bg-white">
+              +
+            </button>
           </div>
         </div>
         <div className="mt-16">

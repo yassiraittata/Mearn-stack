@@ -1,10 +1,10 @@
 export interface Task {
-  createdAt: string;
+  _id?: string;
+  title: string;
+  text: string;
   developer: string;
   project: string;
   status: "todo" | "in-progress" | "done";
-  text: string;
-  title: string;
-  updatedAt: string;
-  _id: string;
+  updatedAt?: string;
+  createdAt?: string;
 }

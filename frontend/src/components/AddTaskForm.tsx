@@ -1,8 +1,18 @@
 import { useImperativeHandle, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import type { Task } from "../models/tasks";
+import { showErrorToast, showSuccessToast } from "../utils/toast";
+import useTasksStore from "../store/tasks";
 
-const AddTaskForm = ({ ref }) => {
-  const [isLoading, setIsLoading] = useState();
+const AddTaskForm = ({ ref, status }) => {
   const dialog = useRef<HTMLDialogElement>(null);
+
+  const { projectId } = useParams<{ projectId: string }>();
+
+  const titleRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  const { addTask, isLoading } = useTasksStore((state) => state);
 
   useImperativeHandle(ref, () => {
     return {
@@ -11,6 +21,34 @@ const AddTaskForm = ({ ref }) => {
       },
     };
   });
+
+  async function addTaskHandler() {
+    const title = titleRef.current?.value;
+    const description = descriptionRef.current?.value;
+
+    if (!title || !description) {
+      showErrorToast("Al feilds are required!");
+      return;
+    }
+    const task: Task = {
+      title,
+      text: description,
+      project: projectId || "",
+      status: status,
+      developer: "",
+    };
+
+    try {
+      if (!projectId) return;
+      addTask(projectId, task);
+      showSuccessToast("Task added successfully!");
+      dialog.current?.close();
+    } catch (error) {
+      showErrorToast(
+        error.message || "Failed to delete project. Please try again."
+      );
+    }
+  }
 
   return (
     <>
@@ -34,6 +72,7 @@ const AddTaskForm = ({ ref }) => {
                 id="title"
                 className="w-full px-4 py-2.5  rounded-md border border-gray-500 outline-none text-sm bg-gray-900"
                 placeholder="Enter your title"
+                ref={titleRef}
               />
             </div>
 
@@ -46,6 +85,7 @@ const AddTaskForm = ({ ref }) => {
                 className="w-full px-4 py-2.5  rounded-md border border-gray-500 outline-none text-sm bg-gray-900"
                 placeholder="Enter your description"
                 rows={4}
+                ref={descriptionRef}
               ></textarea>
             </div>
           </div>
@@ -60,6 +100,8 @@ const AddTaskForm = ({ ref }) => {
             <button
               type="button"
               className="w-full bg-primary-500 hover:bg-primary-700   p-2 rounded-md cursor-pointer flex items-center justify-center"
+              onClick={addTaskHandler}
+              disabled={isLoading}
             >
               {isLoading ? (
                 <svg

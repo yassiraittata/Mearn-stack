@@ -14,7 +14,7 @@ function Column({ status, tasks }: { status: string; tasks: Task[] }) {
 
   return (
     <>
-      <AddTaskForm ref={dialog} />
+      <AddTaskForm ref={dialog} status={status} />
       <div className="h-full bg-[#1c1c1c] p-4 rounded-3xl" ref={setNodeRef}>
         <div className="flex items-start justify-between w-full p-3 mb-4">
           <h1 className="text-3xl font-extrabold text-white first-letter:uppercase ">

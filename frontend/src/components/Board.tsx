@@ -11,7 +11,7 @@ const Board = () => {
   const [tasksByStatus, setTasksByStatus] = useState<Record<string, Task[]>>(
     {}
   );
-  const { tasks } = useTasksStore((state) => state);
+  const { tasks, updateTaskSatus } = useTasksStore((state) => state);
 
   useEffect(() => {
     setTasksByStatus(groupTasksByStatus(tasks));
@@ -47,6 +47,8 @@ const Board = () => {
       [sourceColumn]: newSourceList,
       [overColumn]: newDestList,
     }));
+
+    updateTaskSatus(draggedItem?._id as string, overColumn);
 
     try {
       const res = await axios.put("/tasks/" + draggedItem?._id, {
