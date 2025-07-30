@@ -25,8 +25,11 @@ function ProjectPage() {
         setProject(project);
         setSelectedProject(project);
       } catch (err: unknown) {
-        console.log(err);
-        showErrorToast("Failed to fetch project details");
+        let message =
+          err.response?.data?.message ||
+          err?.message ||
+          "Failed to fetch project details";
+        showErrorToast(message);
       } finally {
         setLoading(false);
       }

@@ -30,9 +30,14 @@ const getTasksForProject: express.RequestHandler = async (req, res, next) => {
     return next(createError(404, "Project not found"));
   }
 
+  console.log({
+    project,
+    userId,
+  });
+
   if (
     project.creator.toString() !== userId &&
-    !project.developers.includes(userId)
+    !project.developers.some((devId) => devId.equals(userId))
   ) {
     return next(
       createError(403, "You are not authorized to view this project")
