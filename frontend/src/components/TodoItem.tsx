@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import type { Task } from "../models/tasks";
 import { DeleteModal } from "./UI/DeleteModal";
 import useTasksStore from "../store/tasks";
 import { showErrorToast, showSuccessToast } from "../utils/toast";
+import AddTaskForm from "./AddTaskForm";
 
 function TodoItem({ task }: { task: Task }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task._id,
   });
+  const dialog = useRef(null);
 
   const { deleteTask, isLoading } = useTasksStore((state) => state);
 
@@ -40,9 +42,6 @@ function TodoItem({ task }: { task: Task }) {
   const handleDeleteClick = (e) => {
     setDeleteModalVisible(true);
   };
-  const handleUpdateClick = (e) => {
-    console.log("Delete clicked!");
-  };
 
   return (
     <>
@@ -53,11 +52,17 @@ function TodoItem({ task }: { task: Task }) {
           isLoading={isLoading}
         />
       )}
+      <AddTaskForm
+        ref={dialog}
+        status="todo"
+        isEdit={true}
+        taskItem={task}
+        id={task._id}
+      />
       <div
         ref={setNodeRef}
         style={style}
         className="bg-[#3d3d3d] p-5 mb-5 rounded-xl text-white group relative"
-        onClick={() => console.log("hello")}
       >
         <div className="bg-primary-dark/70 backdrop-blur-sm h-full p-3 group-hover:flex hidden cursor-pointer absolute top-0 left-0 w-full rounded-xl justify-between items-center">
           <div {...listeners} {...attributes}>
@@ -100,7 +105,7 @@ function TodoItem({ task }: { task: Task }) {
             </button>
             <button
               className="text-blue-500 cursor-pointer"
-              onClick={handleUpdateClick}
+              onClick={() => dialog.current.open()}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

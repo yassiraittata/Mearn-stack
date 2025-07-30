@@ -9,6 +9,7 @@ type TasksState = {
   getTasksList(id: string): Promise<Project>;
   setTasks: (tasks: Task[]) => void;
   addTask: (projectId: string, task: Task) => void;
+  updateTask: (id: string, task: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   updateTaskSatus: (
     id: string,
@@ -44,6 +45,33 @@ const useTasksStore = create<TasksState>((set, get) => ({
     console.log(get().tasks);
   },
 
+  async updateTask(id: string, task: Partial<Task>) {
+    const taskItem = get().tasks.find((el) => el._id == id);
+    const taskItemIndex = get().tasks.findIndex((el) => el._id == id);
+
+    if (!taskItem) throw new Error("Task was not found!");
+
+    const updatedTask = Object.assign(taskItem, task);
+    try {
+      const response = await axios.put(`/tasks/${id}`, updatedTask);
+
+      if (response.status !== 200) throw new Error("Failed to update task");
+
+      const list = get().tasks;
+      list[taskItemIndex] = updatedTask;
+
+      set({ tasks: list });
+    } catch (err) {
+      console.log(err);
+      let message =
+        err?.response?.data?.message ||
+        err.message ||
+        "Failed to update task. Please try again.";
+
+      throw new Error(message);
+    }
+  },
+
   async addTask(projectId: string, task: Task) {
     try {
       set({ isLoading: true });
@@ -68,7 +96,7 @@ const useTasksStore = create<TasksState>((set, get) => ({
     } catch (err) {
       console.log(err);
       let message =
-        e.response.data.message || "Failed to add task. Please try again.";
+        err?.response?.data?.message || "Failed to add task. Please try again.";
 
       throw new Error(message);
     }
@@ -90,7 +118,8 @@ const useTasksStore = create<TasksState>((set, get) => ({
     } catch (err) {
       console.log(err);
       let message =
-        e.response.data.message || "Failed to add task. Please try again.";
+        err?.response?.data?.message ||
+        "Failed to delete task. Please try again.";
 
       throw new Error(message);
     }
