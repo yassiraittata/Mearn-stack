@@ -1,13 +1,10 @@
-import {
-  useImperativeHandle,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
+import { useImperativeHandle, useRef, useState, type RefObject } from "react";
 import { useParams } from "react-router-dom";
 import type { Task } from "../models/tasks";
 import { showErrorToast, showSuccessToast } from "../utils/toast";
 import useTasksStore from "../store/tasks";
+import type { User } from "../models/User";
+import useProjectsStore from "../store/projects";
 
 type PropsType = {
   ref: RefObject<HTMLDialogElement | null>;
@@ -19,6 +16,7 @@ type PropsType = {
 
 const AddTaskForm = ({ ref, status, isEdit, taskItem, id }: PropsType) => {
   const dialog = useRef<HTMLDialogElement>(null);
+  const { selectedProject } = useProjectsStore((state) => state);
 
   const { projectId } = useParams<{ projectId: string }>();
 
@@ -26,6 +24,9 @@ const AddTaskForm = ({ ref, status, isEdit, taskItem, id }: PropsType) => {
     taskItem?.title || ""
   );
   const [enteredText, setEnteredText] = useState<string>(taskItem?.text || "");
+  const [entereddeveloper, setEntereddeveloper] = useState<string>(
+    taskItem?.developer || ""
+  );
 
   const { addTask, updateTask, isLoading } = useTasksStore((state) => state);
 
@@ -56,7 +57,7 @@ const AddTaskForm = ({ ref, status, isEdit, taskItem, id }: PropsType) => {
       text: description,
       project: projectId || "",
       status: taskItem?.status || status,
-      developer: "",
+      developer: taskItem?.developer || entereddeveloper,
     };
 
     try {
@@ -117,6 +118,22 @@ const AddTaskForm = ({ ref, status, isEdit, taskItem, id }: PropsType) => {
                 value={enteredText}
                 onChange={(e) => setEnteredText(e.target.value)}
               ></textarea>
+            </div>
+            <div className="mb-6">
+              <label className="block  mb-2 text-sm" htmlFor="developer">
+                Developer
+              </label>
+              <select
+                id="developer"
+                className="w-full px-4 py-2.5  rounded-md border border-gray-500 outline-none text-sm bg-gray-900"
+                value={entereddeveloper}
+                onChange={(e) => setEntereddeveloper(e.target.value)}
+              >
+                {selectedProject?.developers &&
+                  (selectedProject.developers as User[]).map((user) => (
+                    <option value={user._id}>{user.name}</option>
+                  ))}
+              </select>
             </div>
           </div>
 

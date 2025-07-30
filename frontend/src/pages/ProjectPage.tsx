@@ -7,6 +7,7 @@ import ProjectPageLoader from "../components/UI/ProjectPageLoader";
 import Board from "../components/Board";
 import useTasksStore from "../store/tasks";
 import type { User } from "../models/User";
+import useProjectsStore from "../store/projects";
 
 function ProjectPage() {
   const [project, setProject] = useState<Project>();
@@ -14,6 +15,7 @@ function ProjectPage() {
 
   const { projectId } = useParams<{ projectId: string }>();
   const { getTasksList } = useTasksStore();
+  const { setSelectedProject } = useProjectsStore((state) => state);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -21,6 +23,7 @@ function ProjectPage() {
         if (!projectId) return;
         const project = await getTasksList(projectId);
         setProject(project);
+        setSelectedProject(project);
       } catch (err: unknown) {
         console.log(err);
         showErrorToast("Failed to fetch project details");
@@ -30,7 +33,7 @@ function ProjectPage() {
     };
 
     fetchProject();
-  }, [projectId, getTasksList]);
+  }, [projectId, getTasksList, setSelectedProject]);
 
   if (loading) {
     return <ProjectPageLoader />;

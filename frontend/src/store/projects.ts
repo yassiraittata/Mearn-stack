@@ -4,13 +4,16 @@ import axios from "../utils/axios";
 
 type TasksState = {
   projects: Project[];
+  selectedProject: Project | null;
   isLoading: boolean;
   error: string;
   getProjectsList(): void;
   deleteProject(id: string): void;
+  setSelectedProject: (project: Project) => void;
 };
 
 const useProjectsStore = create<TasksState>((set, get) => ({
+  selectedProject: null,
   projects: [],
   isLoading: true,
   error: "",
@@ -49,6 +52,10 @@ const useProjectsStore = create<TasksState>((set, get) => ({
       throw new Error(message);
     }
     set({ isLoading: false });
+  },
+
+  setSelectedProject(project: Project) {
+    set({ selectedProject: project });
   },
 }));
 
