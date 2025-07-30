@@ -48,8 +48,10 @@ const Board = () => {
       [overColumn]: newDestList,
     }));
 
+    // update lcally
     updateTaskSatus(draggedItem?._id as string, overColumn);
 
+    // update in DB
     try {
       const res = await axios.put("/tasks/" + draggedItem?._id, {
         status: overColumn,

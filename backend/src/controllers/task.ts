@@ -120,7 +120,7 @@ const deleteTask: express.RequestHandler = async (req, res, next) => {
   project.tasks = project.tasks.filter((t) => t.toString() !== taskId);
   await project.save();
 
-  res.status(200).json({ message: "Task deleted successfully" });
+  res.status(204).json({ message: "Task deleted successfully" });
 };
 
 // update a task

@@ -9,6 +9,7 @@ type TasksState = {
   getTasksList(id: string): Promise<Project>;
   setTasks: (tasks: Task[]) => void;
   addTask: (projectId: string, task: Task) => void;
+  deleteTask: (id: string) => void;
   updateTaskSatus: (
     id: string,
     status: "todo" | "in-progress" | "done"
@@ -64,6 +65,28 @@ const useTasksStore = create<TasksState>((set, get) => ({
       set(() => ({
         tasks: list,
       }));
+    } catch (err) {
+      console.log(err);
+      let message =
+        e.response.data.message || "Failed to add task. Please try again.";
+
+      throw new Error(message);
+    }
+    set({ isLoading: false });
+  },
+
+  async deleteTask(id: string) {
+    try {
+      set({ isLoading: true });
+
+      const response = await axios.delete(`/tasks/${id}`);
+
+      if (response.status !== 204) {
+        throw new Error("Failed to delete task");
+      }
+
+      const list = get().tasks.filter((task) => task._id !== id);
+      set({ tasks: list });
     } catch (err) {
       console.log(err);
       let message =

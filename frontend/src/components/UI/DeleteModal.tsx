@@ -1,4 +1,3 @@
-import React from "react";
 
 export const DeleteModal = ({
   deletHandler,
@@ -12,7 +11,7 @@ export const DeleteModal = ({
   return (
     <div
       id="deleteModal"
-      className="overflow-y-auto flex verflow-x-hidden fixed top-0 right-0 bg-black/40 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full"
+      className="overflow-y-auto flex verflow-x-hidden fixed top-0 right-0 bg-black/60 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full"
     >
       <div className="relative p-4 w-full max-w-md h-full md:h-auto">
         <div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 -mt-32">
