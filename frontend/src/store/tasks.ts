@@ -24,15 +24,17 @@ const useTasksStore = create<TasksState>((set, get) => ({
   async getTasksList(projectId: string) {
     const response = await axios.get(`/projects/${projectId}/tasks`);
 
+    console.log("TASK", response.data.tasks);
+
     get().setTasks(response.data.tasks);
 
     return response.data;
   },
 
   setTasks(tasks: Task[]) {
-    set(() => ({
+    set({
       tasks,
-    }));
+    });
   },
 
   updateTaskSatus(id: string, status: "todo" | "in-progress" | "done") {
@@ -46,29 +48,38 @@ const useTasksStore = create<TasksState>((set, get) => ({
   },
 
   async updateTask(id: string, task: Partial<Task>) {
-    const taskItem = get().tasks.find((el) => el._id == id);
-    const taskItemIndex = get().tasks.findIndex((el) => el._id == id);
+    const { tasks } = get(); 
+    const taskItemIndex = tasks.findIndex((el) => el._id === id);
 
-    if (!taskItem) throw new Error("Task was not found!");
+    if (taskItemIndex === -1) {
+      throw new Error("Task was not found!");
+    }
 
-    const updatedTask = Object.assign(taskItem, task);
+    const updatedTask = {
+      ...tasks[taskItemIndex],
+      ...task,
+      _id: id, 
+    };
+
     try {
       const response = await axios.put(`/tasks/${id}`, updatedTask);
 
-      if (response.status !== 200) throw new Error("Failed to update task");
+      if (response.status !== 200) {
+        throw new Error("Failed to update task");
+      }
 
-      const list = get().tasks;
-      list[taskItemIndex] = updatedTask;
+      const updatedTasks = [...tasks];
+      updatedTasks[taskItemIndex] = response.data;
 
-      set({ tasks: list });
+      set({ tasks: updatedTasks });
     } catch (err) {
-      console.log(err);
-      let message =
-        err?.response?.data?.message ||
+      console.error("Update task error:", err); // Better error logging
+      const message =
+        err.response?.data?.message ||
         err.message ||
         "Failed to update task. Please try again.";
 
-      throw new Error(message);
+      throw new Error(message); // Re-throw for handling in UI
     }
   },
 

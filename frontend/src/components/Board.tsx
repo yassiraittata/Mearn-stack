@@ -11,7 +11,8 @@ const Board = () => {
   const [tasksByStatus, setTasksByStatus] = useState<Record<string, Task[]>>(
     {}
   );
-  const { tasks, updateTaskSatus } = useTasksStore((state) => state);
+  const tasks = useTasksStore((state) => state.tasks);
+  const { updateTaskSatus } = useTasksStore((state) => state);
 
   useEffect(() => {
     setTasksByStatus(groupTasksByStatus(tasks));

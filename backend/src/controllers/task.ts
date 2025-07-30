@@ -17,8 +17,14 @@ const getTasksForProject: express.RequestHandler = async (req, res, next) => {
 
   const project = await projectModel
     .findById(projectId)
-    .populate("tasks")
-    .populate("developers");
+    .populate("developers")
+    .populate({
+      path: "tasks",
+      populate: {
+        path: "developer",
+        model: "User",
+      },
+    });
 
   if (!project) {
     return next(createError(404, "Project not found"));
@@ -183,7 +189,9 @@ const updateTask: express.RequestHandler = async (req, res, next) => {
 
   await taskItem.save();
 
-  res.status(200).json(taskItem);
+  const task = await taskItem.populate("developer");
+
+  res.status(200).json(task);
 };
 
 export { getTasksForProject, createTaskForProject, deleteTask, updateTask };

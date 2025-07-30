@@ -124,10 +124,19 @@ function TodoItem({ task }: { task: Task }) {
             </button>
           </div>
         </div>
-        <h3 className="font-bold text-lg mb-3">{task.title}</h3>
+        <h3 className="font-bold text-lg mb-1">{task.title}</h3>
         <p className="text-sm text-gray-300 font-medium">
           {task.text || "No description provided"}
         </p>
+
+        {task?.developer && (
+          <div className="flex items-center gap-2 mt-2">
+            <div className="flex size-5 rounded-full ring-1 bg-blue-800 items-center justify-center  uppercase font-bold text-[8px]">
+              {task?.developer?.name?.substring(0, 2)}
+            </div>
+            {task?.developer?.name}
+          </div>
+        )}
       </div>
     </>
   );

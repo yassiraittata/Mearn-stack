@@ -25,7 +25,7 @@ const AddTaskForm = ({ ref, status, isEdit, taskItem, id }: PropsType) => {
   );
   const [enteredText, setEnteredText] = useState<string>(taskItem?.text || "");
   const [entereddeveloper, setEntereddeveloper] = useState<string>(
-    taskItem?.developer || ""
+    taskItem?.developer?._id || ""
   );
 
   const { addTask, updateTask, isLoading } = useTasksStore((state) => state);
@@ -57,7 +57,7 @@ const AddTaskForm = ({ ref, status, isEdit, taskItem, id }: PropsType) => {
       text: description,
       project: projectId || "",
       status: taskItem?.status || status,
-      developer: taskItem?.developer || entereddeveloper,
+      developer: entereddeveloper,
     };
 
     try {

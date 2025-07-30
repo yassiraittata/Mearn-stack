@@ -4,7 +4,9 @@ import TodoItem from "./TodoItem";
 import AddTaskForm from "./AddTaskForm";
 import { useRef } from "react";
 
-function Column({ status, tasks }: { status: string; tasks: Task[] }) {
+type PropsType = { status: "todo" | "in-progress" | "done"; tasks: Task[] };
+
+function Column({ status, tasks }: PropsType) {
   const { setNodeRef } = useDroppable({
     id: status,
     data: { status },
@@ -14,7 +16,13 @@ function Column({ status, tasks }: { status: string; tasks: Task[] }) {
 
   return (
     <>
-      <AddTaskForm ref={dialog} status={status} />
+      <AddTaskForm
+        ref={dialog}
+        status={status}
+        id=""
+        isEdit={false}
+        key={status}
+      />
       <div className="h-full bg-[#1c1c1c] p-4 rounded-3xl" ref={setNodeRef}>
         <div className="flex items-start justify-between w-full p-3 mb-4">
           <h1 className="text-3xl font-extrabold text-white first-letter:uppercase ">
